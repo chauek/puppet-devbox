@@ -18,4 +18,9 @@ class mysql {
         command => "mysqladmin -uroot password root",
         require => Service["mysql"],
     }
+    
+    exec { 'mysql-root':
+        command => 'mysql -u root -proot mysql -e "update mysql.user set host=\'%\' where user=\'root\' and host=\'localhost\';flush privileges;"',
+        require => Exec["set-mysql-password"]
+    }
 }
