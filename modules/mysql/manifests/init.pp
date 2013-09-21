@@ -4,6 +4,12 @@ class mysql {
         ensure => latest,
         require => Exec['apt-get update']
     }
+    
+    exec { 'mysql-open-port':
+		command => "sed -i 's/bind-address/# bind-address/g' /etc/mysql/my.cnf",
+        require => Package["mysql-server"],
+        notify  => Service['mysql']
+	}
 
     # Enable the MySQL service
     service { "mysql":
@@ -16,11 +22,13 @@ class mysql {
     exec { "set-mysql-password":
         unless => "mysqladmin -uroot -proot status",
         command => "mysqladmin -uroot password root",
-        require => Service["mysql"],
+        require => Service["mysql"]
     }
     
     exec { 'mysql-root':
-        command => 'mysql -u root -proot mysql -e "update mysql.user set host=\'%\' where user=\'root\' and host=\'localhost\';flush privileges;"',
+        command => 'mysql -u root -proot mysql -e "GRANT ALL PRIVILEGES ON *.* TO \'root\'@\'%\' IDENTIFIED BY \'root\';flush privileges;"',
         require => Exec["set-mysql-password"]
     }
+
+    
 }
