@@ -1,5 +1,5 @@
 # Main module
-class devbox ($hostname, $documentroot, $gitUser, $gitEmail) {
+class devbox ($hostname, $documentroot) {
     # Set paths
     Exec {
         path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
@@ -18,10 +18,7 @@ class devbox ($hostname, $documentroot, $gitUser, $gitEmail) {
         documentroot => $documentroot
     }
 
-    class { "git":
-        gitUser => $gitUser,
-        gitEmail => $gitEmail
-    }
+    include git
     include svn
 
     include zsh
